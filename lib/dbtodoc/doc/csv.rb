@@ -2,7 +2,7 @@ require 'csv'
 module Dbtodoc
   module Doc
     module Csv
-      DOC_HEADER = %w(表名 字段名 类型 NULL許可 默认値 日本語名 説明 样本数据 索引名)
+      DOC_HEADER = %w(テーブル名 フィールド名 型 NULL許可 デフォルト値 日本語名 説明 サンプルデータ 索引名)
 
       private
       def before_define

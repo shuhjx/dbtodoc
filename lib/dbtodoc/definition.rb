@@ -17,7 +17,7 @@ module Dbtodoc
       before_define()
       instance_eval(&block)
     ensure
-      after_define()
+      after_define() rescue nil
     end
 
     def index(column_names, **options)
@@ -33,7 +33,13 @@ module Dbtodoc
     end
 
     def database
-      @_database ||= ActiveRecord::Base.connection.current_database
+      return @_database if @_database
+      if ActiveRecord::Base.connection.respond_to?(:current_database)
+        @_database = ActiveRecord::Base.connection.current_database
+      else
+        # sqlite3 数据库文件路径
+        @_database = File.basename(ActiveRecord::Base.connection_db_config.database)
+      end
     end
     private
     # 写入文档
@@ -91,25 +97,48 @@ module Dbtodoc
     def add_foreign_key(from_table, to_table, **options)
       #TODO 外键
     end
+    def enable_extension(extension_name)
+      # TODO
+    end
+
+    # def test(name)
+    #   if !@definition
+    #     version = ActiveRecord::Migration.current_version
+    #     klass = Class.new(ActiveRecord::Migration::Compatibility.find(version)) do
+    #       include ActiveRecord::Schema::Definition
+    #     end
+    #     @definition = klass.new
+    #   end
+    #   @definition.instance_eval do
+    #     create_table("test_bak") do |t|
+    #       puts "#{name}: #{t.method(name).source_location}"
+    #     end
+    #     drop_table("test_bak")
+    #   end
+    # end
 
     def method_missing(name, *args, &block)
       type = case name
-        when :bigint
+        when :bigint, :bigserial
           ActiveRecord::Type.registry.lookup(:big_integer)
+        when :serial
+          ActiveRecord::Type.registry.lookup(:integer)
         else 
           ActiveRecord::Type.registry.lookup(name.to_sym) rescue nil
         end
+      column = args[0]
+      options = args[1] || {}
       if type
-        column = args[0]
-        options = args[1] || {}
         # 调用type_to_sql方法
         sql_type = ActiveRecord::Base.connection.schema_creation.send(:type_to_sql, type.type, **options)
         add_row(column, sql_type, **options)
+      elsif native_type = ActiveRecord::Base.adapter_class.native_database_types[name]
+        add_row(column, native_type[:name], **options)
       else
         puts '------------'
         puts "name: #{name}, args: #{args}"
         puts '------------'
-        super
+        raise "Unknown method: #{name}"
       end
     end
   end

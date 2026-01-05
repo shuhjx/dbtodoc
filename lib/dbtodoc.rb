@@ -55,10 +55,13 @@ module Dbtodoc
     case adapter
     when 'mysql2'
       require 'mysql2'
-    when 'pg'
+    when 'postgresql'
       require 'pg'
     when 'sqlite3'
       require 'sqlite3'
+      _tmp = all_db_configs[db_name].update('database' => File.join(path, db_name))
+      db_name = File.basename(db_name)
+      all_db_configs[db_name] = _tmp
     else
       puts "Unknown adapter: #{adapter}"
       exit 1
