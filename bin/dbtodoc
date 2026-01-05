@@ -1,0 +1,42 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+require 'bundler/setup'
+
+require 'optparse'
+class ArgsParser
+  def self.parse!(args)
+    options = {
+      type: 'excel'
+    }
+    opt_parser = OptionParser.new do |opts|
+      opts.banner = "Usage: dbtodoc [options]"
+
+      opts.on('-t', '--type TYPE', "指定输出类型，默认值：excel，可选值：schema, csv, excel") do |o|
+        options[:type] = o
+      end
+
+      opts.on('-h', '--help', "显示帮助\n例：dbtodoc -t csv /rails/root/path") do
+        puts opts
+        exit
+      end
+    end
+    # 解析命令行参数
+    opt_parser.parse!(args)
+    options
+  end
+end
+
+# 解析命令行参数
+options = ArgsParser.parse!(ARGV)
+# 获取目标目录
+path = ARGV.first || '.'
+# 确保目录存在
+unless File.exist?(path)
+  puts "#{path}: 文件或目录不存在"
+  exit 1
+end
+options[:path] = path
+
+require 'dbtodoc'
+
+Dbtodoc.start(options)
