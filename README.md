@@ -42,16 +42,19 @@ DBToDoc 提供了一个简单的命令行接口：
 
 ```bash
 # 导出为 schema.rb 格式
-dbtodoc --type=schema
+dbtodoc --format=ruby
+
+# 导出为 schema.sql 格式
+dbtodoc --format=sql
 
 # 导出为 CSV 格式
-dbtodoc --type=csv
+dbtodoc --format=csv
 
 # 导出为 Excel 格式
-dbtodoc --type=excel
+dbtodoc --format=excel
 
 # 指定项目路径
-dbtodoc --path=/path/to/rails/project --type=excel
+dbtodoc --path=/path/to/rails/project --format=excel
 ```
 
 ### 在 Ruby 代码中使用
@@ -60,16 +63,19 @@ dbtodoc --path=/path/to/rails/project --type=excel
 require 'dbtodoc'
 
 # 导出为 schema.rb 格式
-Dbtodoc.start(type: 'schema')
+Dbtodoc.start(format: 'ruby')
+
+# 导出为 schema.sql 格式
+Dbtodoc.start(format: 'sql')
 
 # 导出为 CSV 格式
-Dbtodoc.start(type: 'csv')
+Dbtodoc.start(format: 'csv')
 
 # 导出为 Excel 格式
-Dbtodoc.start(type: 'excel')
+Dbtodoc.start(format: 'excel')
 
 # 指定项目路径
-Dbtodoc.start(path: '/path/to/rails/project', type: 'excel')
+Dbtodoc.start(path: '/path/to/rails/project', format: 'excel')
 ```
 
 ## 📊 输出格式说明

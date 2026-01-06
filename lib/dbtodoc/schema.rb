@@ -36,14 +36,14 @@ module ActiveRecord
         @class_for_version ||= {}
         @class_for_version[version] ||= Class.new do
           include ::Dbtodoc::Definition
-          if @@doc_type_module
-            include @@doc_type_module
+          if @@doc_format_module
+            include @@doc_format_module
           end
         end
       end
 
-      def set_doc_type(type)
-        @@doc_type_module = case type
+      def set_doc_format(format)
+        @@doc_format_module = case format
           when 'csv'
             require_relative('./doc/csv.rb')
             ::Dbtodoc::Doc::Csv
@@ -51,7 +51,7 @@ module ActiveRecord
             require_relative './doc/excel.rb'
             ::Dbtodoc::Doc::Excel
           else
-            raise ArgumentError, "Invalid doc type: #{type}"
+            raise ArgumentError, "Invalid doc format: #{format}"
           end
       end
     end

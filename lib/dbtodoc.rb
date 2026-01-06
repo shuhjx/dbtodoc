@@ -24,7 +24,6 @@ module Dbtodoc
   
   def self.start(options)
     path = options[:path] || '.'
-    Dir.chdir(path) if path != '.' # 切换到目标目录
 
     db_config_file = File.join(path, 'config/database.yml')
     unless File.exist?(db_config_file)
@@ -72,29 +71,31 @@ module Dbtodoc
 
     # 确保tmp目录存在
     FileUtils.mkdir_p File.join(path, 'tmp')
-
-    # 生成数据库 schema 文件
-    schema_file = File.join(path, "tmp/#{db_name}_schema.rb")
-    File.open(schema_file, 'w:utf-8') do |file|
-      if ActiveRecord.version >= '7.1'
-        ActiveRecord::SchemaDumper.dump(ActiveRecord::Base.connection_pool, file)
-      else
-        ActiveRecord::SchemaDumper.dump(ActiveRecord::Base.connection, file)
+    
+    format = options[:format].downcase
+    case format
+    when 'sql'
+      filename = File.join(path, "tmp/#{db_name}_schema.sql")
+      require_relative File.join(__dir__, 'dbtodoc/doc/sql.rb')
+      Dbtodoc::Doc::Sql.dump(filename)
+      puts "SQL file: #{filename}"
+    when 'ruby', 'csv', 'excel'
+      schema_file = File.join(path, "tmp/#{db_name}_schema.rb")
+      require_relative File.join(__dir__, 'dbtodoc/doc/ruby.rb')
+      # 生成数据库 schema 文件
+      Dbtodoc::Doc::Ruby.dump(schema_file)
+      if format == 'ruby'
+        puts "Ruby file: #{schema_file}"
+        exit
       end
-    end
-
-    case options[:type].downcase
-    when 'schema'
-      puts "Schema file: #{schema_file}"
-    when 'csv', 'excel'
       require_relative File.join(__dir__, 'dbtodoc/schema.rb')
-      ActiveRecord::Schema.set_doc_type(options[:type])
+      ActiveRecord::Schema.set_doc_format(options[:format])
       #执行schema.rb文件，生成csv|excel文件
-      eval File.read(schema_file), binding
-      puts "CSV file: #{File.join(path, "tmp/#{db_name}.csv")}" if options[:type] == 'csv'
-      puts "Excel file: #{File.join(path, "tmp/#{db_name}.xlsx")}" if options[:type] == 'excel'
+      eval File.read(schema_file)
+      puts "CSV file: #{File.join(path, "tmp/#{db_name}.csv")}" if options[:format] == 'csv'
+      puts "Excel file: #{File.join(path, "tmp/#{db_name}.xlsx")}" if options[:format] == 'excel'
     else
-      puts "Unknown type: #{options[:type]}"
+      puts "Unknown format: #{options[:format]}"
     end
   end
 end

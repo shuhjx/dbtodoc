@@ -6,16 +6,16 @@ require 'optparse'
 class ArgsParser
   def self.parse!(args)
     options = {
-      type: 'excel'
+      format: 'excel'
     }
     opt_parser = OptionParser.new do |opts|
       opts.banner = "Usage: dbtodoc [options]"
 
-      opts.on('-t', '--type TYPE', "指定输出类型，默认值：excel，可选值：schema, csv, excel") do |o|
-        options[:type] = o
+      opts.on('-f', '--format FORMAT', "指定输出格式，默认值：excel，可选值：ruby, sql, csv, excel") do |o|
+        options[:format] = o
       end
 
-      opts.on('-h', '--help', "显示帮助\n例：dbtodoc -t csv /rails/root/path") do
+      opts.on('-h', '--help', "显示帮助\n例：dbtodoc -f csv /rails/root/path") do
         puts opts
         exit
       end
@@ -35,8 +35,8 @@ unless File.exist?(path)
   puts "#{path}: 文件或目录不存在"
   exit 1
 end
-options[:path] = path
+options[:path] = File.expand_path(path, Dir.pwd)
+Dir.chdir(options[:path]) if path != '.' # 切换到目标目录
 
 require 'dbtodoc'
-
 Dbtodoc.start(options)
