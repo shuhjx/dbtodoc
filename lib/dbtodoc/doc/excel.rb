@@ -45,7 +45,6 @@ module Dbtodoc
 
       def add_table_name_row(table_name)
         [table_name, i18n.table_name(table_name), *Array.new(DOC_HEADER.size - 2, nil)].each_with_index do |value, col|
-          @col_max_widths[col+1] = [@col_max_widths[col+1], value.to_s.length].max if value
           cell = @worksheet.add_cell(@max_row, col + 1, value)
           # 设置背景颜色（蓝色）
           set_cell_style(cell, :table_name)

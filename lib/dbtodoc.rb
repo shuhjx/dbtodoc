@@ -75,12 +75,12 @@ module Dbtodoc
     format = options[:format].downcase
     case format
     when 'sql'
-      filename = File.join(path, "tmp/#{db_name}_schema.sql")
+      filename = File.join(path, "tmp/#{db_name}.sql")
       require_relative File.join(__dir__, 'dbtodoc/doc/sql.rb')
       Dbtodoc::Doc::Sql.dump(filename)
       puts "SQL file: #{filename}"
     when 'ruby', 'csv', 'excel'
-      schema_file = File.join(path, "tmp/#{db_name}_schema.rb")
+      schema_file = File.join(path, "tmp/#{db_name}.rb")
       require_relative File.join(__dir__, 'dbtodoc/doc/ruby.rb')
       # 生成数据库 schema 文件
       Dbtodoc::Doc::Ruby.dump(schema_file)
