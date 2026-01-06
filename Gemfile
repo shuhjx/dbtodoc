@@ -10,8 +10,8 @@ gem "rake", "~> 13.0"
 gem "rspec", "~> 3.0"
 
 gem 'csv' # 生成 CSV 文件
-gem 'rubyXL', '~> 3.4' # 生成 Excel 文件
-gem 'activerecord' # 数据库操作
+gem 'rubyXL', '>= 3.4' # 生成 Excel 文件
+gem 'activerecord', '>= 5.0.0' # 数据库操作
 gem 'yaml' # 解析数据库配置文件、I18n配置文件
 gem 'optparse' # 解析命令行参数
 gem 'cli-ui' # 命令行界面工具

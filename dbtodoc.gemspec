@@ -9,7 +9,7 @@ Gem::Specification.new do |spec|
   spec.email = ["shuh_jx@163.com"]
 
   spec.summary = "将 Rails 项目的数据库 schema 导出为文档"
-  spec.description = "将 Rails 项目的数据库 schema 导出为文档，支持 schema, csv, excel 格式"
+  spec.description = "将 Rails 项目的数据库 schema 导出为文档，支持 ruby, sql, csv, excel 格式"
   spec.homepage = "https://github.com/shuhjx/dbtodoc"
   spec.required_ruby_version = ">= 2.6.0"
 
@@ -30,8 +30,16 @@ Gem::Specification.new do |spec|
   spec.executable = 'dbtodoc'
   spec.require_paths = ["lib"]
 
-  # Uncomment to register a new dependency of your gem
-  # spec.add_dependency "example-gem", "~> 1.0"
+  # 配置 gem 依赖
+  spec.add_dependency "activerecord", ">= 5.0.0"
+  spec.add_dependency "mysql2"
+  spec.add_dependency "pg"
+  spec.add_dependency "sqlite3"
+  spec.add_dependency "csv" # 生成 CSV 文件
+  spec.add_dependency "rubyXL", ">= 3.4" # 生成 Excel 文件
+  spec.add_dependency "yaml" # 解析数据库配置文件、I18n配置文件
+  spec.add_dependency "optparse" # 解析命令行参数
+  spec.add_dependency "cli-ui" # 命令行界面工具
 
   # For more information and examples about making a new gem, check out our
   # guide at: https://bundler.io/guides/creating_gem.html

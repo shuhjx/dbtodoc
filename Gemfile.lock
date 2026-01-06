@@ -1,7 +1,16 @@
 PATH
   remote: .
   specs:
-    dbtodoc (0.2.0)
+    dbtodoc (1.2.0)
+      activerecord (>= 5.0.0)
+      cli-ui
+      csv
+      mysql2
+      optparse
+      pg
+      rubyXL (>= 3.4)
+      sqlite3
+      yaml
 
 GEM
   remote: https://rubygems.org/
@@ -98,7 +107,7 @@ PLATFORMS
   x86_64-linux-musl
 
 DEPENDENCIES
-  activerecord
+  activerecord (>= 5.0.0)
   cli-ui
   csv
   dbtodoc!
@@ -107,7 +116,7 @@ DEPENDENCIES
   pg
   rake (~> 13.0)
   rspec (~> 3.0)
-  rubyXL (~> 3.4)
+  rubyXL (>= 3.4)
   sqlite3
   yaml
 
