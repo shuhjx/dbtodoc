@@ -38,5 +38,5 @@ end
 options[:path] = File.expand_path(path, Dir.pwd)
 Dir.chdir(options[:path]) if path != '.' # 切换到目标目录
 
-require 'dbtodoc'
+require_relative '../lib/dbtodoc'
 Dbtodoc.start(options)

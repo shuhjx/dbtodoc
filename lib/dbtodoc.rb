@@ -25,18 +25,26 @@ module Dbtodoc
   def self.start(options)
     path = options[:path] || '.'
 
+    all_db_configs = {}
     db_config_file = File.join(path, 'config/database.yml')
-    unless File.exist?(db_config_file)
-      puts "#{db_config_file}: 文件或目录不存在"
-      exit 1
-    end
-    # 读取数据库配置文件
-    all_db_configs = YAML.load_file(db_config_file).each_with_object({}) do |(_, config), h|
-      next if config['database'].blank?
-      config.each do |k, v|
-        config[k] = ERB.new(v).result if v.is_a?(String)
+    if File.exist?(db_config_file)
+      # 读取数据库配置文件
+      YAML.load_file(db_config_file).each do |_, config|
+        next if config['database'].blank?
+        next if config['adapter'] =~ /sqlite/
+        config.each do |k, v|
+          config[k] = ERB.new(v).result if v.is_a?(String)
+        end
+        all_db_configs[config['database']] = config
       end
-      h[config['database']] = config
+    end
+    # 查找sqlite数据库 find . -name "*.sqlite3"
+    Dir.glob(File.join(path, '**/*.{sqlite,sqlite3}')).each do |file|
+      db_name = File.basename(file)
+      all_db_configs[db_name] = {
+        'adapter' => 'sqlite3',
+        'database' => file
+      }
     end
 
     db_name = if all_db_configs.keys.size == 1
