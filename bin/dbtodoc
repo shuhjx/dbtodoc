@@ -37,6 +37,12 @@ unless File.exist?(path)
 end
 options[:path] = File.expand_path(path, Dir.pwd)
 Dir.chdir(options[:path]) if path != '.' # 切换到目标目录
-
-require_relative '../lib/dbtodoc'
+#获取__FILE__的真实路径，解决符号链接问题
+lib_file = File.expand_path('../lib/dbtodoc.rb', File.dirname(File.realpath(__FILE__)))
+puts "lib_file: #{lib_file}"
+if File.exist?(lib_file)
+  require_relative lib_file
+else
+  require 'dbtodoc'
+end
 Dbtodoc.start(options)
